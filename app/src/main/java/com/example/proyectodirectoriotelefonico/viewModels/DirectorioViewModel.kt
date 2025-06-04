@@ -36,12 +36,13 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
         viewModelScope.launch {
             repository.getDatosById(id).collect { contacto ->
                 state = state.copy(
-                    nombreContacto = contacto.nombre,
+                    nombreContacto = contacto.nombreContacto,
                     apellidos = contacto.apellidos,
                     telefono = contacto.telefono,
                     correo = contacto.correo,
                     showSaveButton = true,
-                    ShowTextField = true
+                    ShowTextField = true,
+                    currentContactoId = contacto.id
                 )
             }
         }
@@ -75,7 +76,7 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
         viewModelScope.launch {
             val datos = Datos(
                 id = if (state.showSaveButton) getCurrentContactoId() else 0,
-                nombre = state.nombreContacto,
+                nombreContacto = state.nombreContacto,
                 apellidos = state.apellidos,
                 telefono = state.telefono,
                 correo = state.correo
@@ -112,7 +113,7 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
     // Obtener el ID del contacto actual (si existe)
     private fun getCurrentContactoId(): Long {
         return contactosList.firstOrNull {
-            it.nombre == state.nombreContacto &&
+            it.nombreContacto == state.nombreContacto &&
                     it.apellidos == state.apellidos &&
                     it.telefono == state.telefono &&
                     it.correo == state.correo

@@ -9,7 +9,7 @@ data class Datos(
     @PrimaryKey(autoGenerate = true)
     val id: Long=0,
     @ColumnInfo(name="nombre")
-    val nombre: String,
+    val nombreContacto: String,
     @ColumnInfo(name="apellidos")
     val apellidos: String,
     @ColumnInfo(name="telefono")
