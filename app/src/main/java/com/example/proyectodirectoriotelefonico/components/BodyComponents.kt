@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,16 +58,26 @@ fun MainTitle(title: String) {
 fun MainTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String
+    label: String,
+    isError: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(text = label) },
-        modifier = Modifier
+        isError = isError,
+        keyboardOptions = keyboardOptions,
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 30.dp)
-            .padding(bottom = 15.dp)
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 8.dp),
+        colors = TextFieldDefaults.colors(
+            errorIndicatorColor = MaterialTheme.colorScheme.error,
+            focusedLabelColor = if (isError) MaterialTheme.colorScheme.error
+            else MaterialTheme.colorScheme.primary
+        )
     )
 }
 
@@ -137,6 +148,7 @@ fun EmailTextField(
     )
 }
 
+/*
 @Composable
 fun ContactoCard(
     contacto: Datos,
@@ -203,7 +215,61 @@ fun ContactoCard(
         }
     }
 }
-
+*/
+@Composable
+fun ContactoCard(
+    nombre: String,
+    telefono: String,
+    correo: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = nombre,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Icon(
+                    painter = painterResource(R.drawable.ic_phone),
+                    contentDescription = "Teléfono",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = telefono,
+                    color = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row {
+                Icon(
+                    painter = painterResource(R.drawable.ic_email),
+                    contentDescription = "Correo",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = correo,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
 @Composable
 fun ContactoForm(
     state: DatoState,
@@ -248,6 +314,7 @@ fun ContactoForm(
     }
 }
 
+/*
 @Composable
 fun ContactosList(
     contactos: List<Datos>,
@@ -265,6 +332,8 @@ fun ContactosList(
         }
     }
 }
+*/
+
 
 @Composable
 fun AddContactoFAB(

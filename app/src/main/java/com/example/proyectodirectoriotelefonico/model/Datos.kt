@@ -15,5 +15,5 @@ data class Datos(
     @ColumnInfo(name="telefono")
     val telefono: Int,
     @ColumnInfo(name= "correo")
-    val correo: String
+    val correo: String,
 )

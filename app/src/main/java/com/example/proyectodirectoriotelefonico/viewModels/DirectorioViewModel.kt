@@ -71,6 +71,8 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
         state = state.copy(correo = value)
     }
 
+
+
     // Guardar un contacto (crear o actualizar)
     fun saveContacto() {
         viewModelScope.launch {
@@ -117,6 +119,29 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
                     it.apellidos == state.apellidos &&
                     it.telefono == state.telefono &&
                     it.correo == state.correo
+
         }?.id ?: 0
+    }
+
+    // Función para validar campos
+    fun camposEstanCompletos(): Boolean {
+        return state.nombreContacto.isNotBlank() &&
+                state.apellidos.isNotBlank() &&
+                state.telefono != 0 &&
+                state.correo.isNotBlank() &&
+                state.correo.contains("@") // Validación básica de email
+
+
+    }
+
+    // Función para mostrar errores
+    fun validarCampos(): Map<String, Boolean> {
+        return mapOf(
+            "nombre" to state.nombreContacto.isNotBlank(),
+            "apellidos" to state.apellidos.isNotBlank(),
+            "telefono" to (state.telefono != 0),
+            "correo" to (state.correo.isNotBlank() && state.correo.contains("@")),
+
+        )
     }
 }
