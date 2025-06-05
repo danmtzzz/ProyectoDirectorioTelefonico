@@ -1,8 +1,14 @@
 package com.example.proyectodirectoriotelefonico.views
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +20,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -25,6 +32,8 @@ import com.example.proyectodirectoriotelefonico.viewModels.DatosViewModel
 import com.example.proyectodirectoriotelefonico.viewModels.DirectorioViewModel
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import androidx.compose.ui.res.painterResource
+import com.example.proyectodirectoriotelefonico.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,19 +55,11 @@ fun HomeView(
                     )
                 )
                 // Barra de búsqueda
-                SearchBar(
+                CustomSearchBar(
                     query = searchText,
-                    onQueryChange = { datosViewModel.onSearchTextChange(it) },
-                    onSearch = {},
-                    active = false,
-                    onActiveChange = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    colors = SearchBarDefaults.colors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
-                ) {}
+                    onQueryChange = { datosViewModel.onSearchTextChange(it) }
+                )
+
             }
         },
         floatingActionButton = {
@@ -84,34 +85,88 @@ fun ContentHomeView(
     contactosList: List<Datos>,
     datosViewModel: DatosViewModel
 ) {
+    val searchText by datosViewModel.searchText.collectAsState()
+
     Column(modifier = Modifier.padding(it)) {
-        LazyColumn {
-            items(contactosList) { contacto ->
-                val deleteAction = SwipeAction(
-                    icon = rememberVectorPainter(Icons.Default.Delete),
-                    background = Color.Red,
-                    onSwipe = { datosViewModel.deleteDato(contacto) }
+
+        when {
+            contactosList.isEmpty() && searchText.isNotBlank() -> {
+                // No hay resultados de búsqueda
+
+                EstadoVacioView(
+                    imagenId = R.drawable.empty_contacto,
+                    mensaje = "No se encontraron contactos con ese nombre"
+                )
+            }
+
+            contactosList.isEmpty() -> {
+                // Lista vacía completamente
+                EstadoVacioView(
+                    imagenId = R.drawable.empty,
+                    mensaje = "No hay contactos registrados"
                 )
 
-                val editAction = SwipeAction(
-                    icon = rememberVectorPainter(Icons.Default.Edit),
-                    background = Color.Blue,
-                    onSwipe = { navController.navigate("EditView/${contacto.id}") }
-                )
+            }
 
-                SwipeableActionsBox(
-                    startActions = listOf(editAction),
-                    endActions = listOf(deleteAction),
-                    swipeThreshold = 120.dp
-                ) {
-                    ContactoCard(
-                        nombre = "${contacto.nombreContacto} ${contacto.apellidos}",
-                        telefono = contacto.telefono.toString(),
-                        correo = contacto.correo,
-                        onClick = { navController.navigate("ContactView/${contacto.id}") }
-                    )
+            else -> {
+
+                LazyColumn {
+                    items(contactosList) { contacto ->
+                        val deleteAction = SwipeAction(
+                            icon = rememberVectorPainter(Icons.Default.Delete),
+                            background = Color.Red,
+                            onSwipe = { datosViewModel.deleteDato(contacto) }
+                        )
+
+                        val editAction = SwipeAction(
+                            icon = rememberVectorPainter(Icons.Default.Edit),
+                            background = Color.Blue,
+                            onSwipe = { navController.navigate("EditView/${contacto.id}") }
+                        )
+
+                        SwipeableActionsBox(
+                            startActions = listOf(editAction),
+                            endActions = listOf(deleteAction),
+                            swipeThreshold = 120.dp
+                        ) {
+                            ContactoCard(
+                                nombre = "${contacto.nombreContacto} ${contacto.apellidos}",
+                                telefono = contacto.telefono.toString(),
+                                correo = contacto.correo,
+                                onClick = { navController.navigate("ContactView/${contacto.id}") }
+                            )
+                        }
+                    }
                 }
             }
+
         }
     }
 }
+
+    @Composable
+    fun EstadoVacioView(
+        imagenId: Int,
+        mensaje: String
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = imagenId),
+                contentDescription = mensaje,
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .aspectRatio(1f)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = mensaje,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
