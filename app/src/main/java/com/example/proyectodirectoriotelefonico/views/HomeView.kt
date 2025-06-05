@@ -68,6 +68,7 @@ fun HomeView(
             }
         }
     ) { paddingValues ->
+
         ContentHomeView(
             it = paddingValues,
             navController = navController,
