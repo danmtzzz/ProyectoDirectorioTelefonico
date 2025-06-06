@@ -2,6 +2,7 @@ package com.example.proyectodirectoriotelefonico.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +47,10 @@ fun HomeView(
 ) {
     val searchText by datosViewModel.searchText.collectAsState()
     val contactosList by datosViewModel.filteredContactos.collectAsState()
+    val tipoFiltro by datosViewModel.tipoFiltro.collectAsState()
+
+    val opcionesTipo = listOf<String?>(null, "Amigo", "Familiar", "Compañero de trabajo")
+    val expanded = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -54,12 +61,39 @@ fun HomeView(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 )
+                // Filtro desplegable de tipo de contacto
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Button(
+                        onClick = { expanded.value = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                        modifier = Modifier.fillMaxWidth(0.5f)
+                    ) {
+                        Text(text = tipoFiltro ?: "Todos los tipos")
+                    }
+                    DropdownMenu(
+                        expanded = expanded.value,
+                        onDismissRequest = { expanded.value = false }
+                    ) {
+                        opcionesTipo.forEach { opcion ->
+                            DropdownMenuItem(
+                                text = { Text(text = opcion ?: "Todos los tipos") },
+                                onClick = {
+                                    datosViewModel.onTipoFiltroChange(opcion)
+                                    expanded.value = false
+                                }
+                            )
+                        }
+                    }
+                }
                 // Barra de búsqueda
                 CustomSearchBar(
                     query = searchText,
                     onQueryChange = { datosViewModel.onSearchTextChange(it) }
                 )
-
             }
         },
         floatingActionButton = {
@@ -78,6 +112,7 @@ fun HomeView(
         )
     }
 }
+
 @Composable
 fun ContentHomeView(
     it: PaddingValues,
@@ -133,6 +168,7 @@ fun ContentHomeView(
                                 nombre = "${contacto.nombreContacto} ${contacto.apellidos}",
                                 telefono = contacto.telefono.toString(),
                                 correo = contacto.correo,
+                                tipoContacto = contacto.tipoContacto,
                                 onClick = { navController.navigate("ContactView/${contacto.id}") }
                             )
                         }

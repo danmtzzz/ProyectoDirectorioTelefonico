@@ -40,9 +40,10 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
                     apellidos = contacto.apellidos,
                     telefono = contacto.telefono,
                     correo = contacto.correo,
+                    direccion = contacto.direccion,
+                    tipoContacto = contacto.tipoContacto,
                     showSaveButton = true,
-                    ShowTextField = true,
-                    currentContactoId = contacto.id
+                    ShowTextField = true
                 )
             }
         }
@@ -71,6 +72,14 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
         state = state.copy(correo = value)
     }
 
+    fun onDireccionChange(value: String) {
+        state = state.copy(direccion = value)
+    }
+
+    fun onTipoContactoChange(value: String) {
+        state = state.copy(tipoContacto = value)
+    }
+
 
 
     // Guardar un contacto (crear o actualizar)
@@ -81,7 +90,9 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
                 nombreContacto = state.nombreContacto,
                 apellidos = state.apellidos,
                 telefono = state.telefono,
-                correo = state.correo
+                correo = state.correo,
+                direccion = state.direccion,
+                tipoContacto = state.tipoContacto
             )
 
             if (state.showSaveButton) {
@@ -118,7 +129,9 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
             it.nombreContacto == state.nombreContacto &&
                     it.apellidos == state.apellidos &&
                     it.telefono == state.telefono &&
-                    it.correo == state.correo
+                    it.correo == state.correo &&
+                    it.direccion == state.direccion &&
+                    it.tipoContacto == state.tipoContacto
 
         }?.id ?: 0
     }
@@ -129,8 +142,8 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
                 state.apellidos.isNotBlank() &&
                 state.telefono != 0 &&
                 state.correo.isNotBlank() &&
-                state.correo.contains("@") // Validación básica de email
-
+                state.correo.contains("@") &&// Validación básica de email
+                state.direccion.isNotBlank()
 
     }
 
@@ -141,6 +154,7 @@ class DirectorioViewModel @Inject constructor(private val repository: DatosRepos
             "apellidos" to state.apellidos.isNotBlank(),
             "telefono" to (state.telefono != 0),
             "correo" to (state.correo.isNotBlank() && state.correo.contains("@")),
+            "direccion" to state.direccion.isNotBlank()
 
         )
     }

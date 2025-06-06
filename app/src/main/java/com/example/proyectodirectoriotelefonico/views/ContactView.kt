@@ -147,6 +147,50 @@ fun ContactView(
                                 )
                             }
                         }
+
+                        // Direccion
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_direccion),
+                                contentDescription = "Dirección",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = "Dirección",
+                                    color = Color.White.copy(alpha = 0.7f)
+                                )
+                                Text(
+                                    text = contact.direccion,
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        // Tipo Contacto
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_typecontact),
+                                contentDescription = "Tipo de Contacto",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = "Tipo de Contacto",
+                                    color = Color.White.copy(alpha = 0.7f)
+                                )
+                                Text(
+                                    text = contact.tipoContacto,
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -213,6 +257,44 @@ fun ContactView(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "ENVIAR CORREO A ${contact.nombreContacto.uppercase()}")
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Botón para abrir la dirección en Google Maps
+                Button(
+                    onClick = {
+                        val uri = Uri.encode(contact.direccion)
+                        val gmmIntentUri = Uri.parse("geo:0,0?q=$uri")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+                            setPackage("com.google.android.apps.maps")
+                        }
+                        try {
+                            ContextCompat.startActivity(context, mapIntent, null)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(
+                                context,
+                                "No se encontró una aplicación de mapas instalada",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_direccion), // Usa el mismo ícono de dirección
+                        contentDescription = "Abrir en Maps",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "VER DIRECCIÓN EN MAPS")
+                }
+
+
+
             } ?: run {
                 Text("Contacto no encontrado", color = Color.White)
             }

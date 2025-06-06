@@ -223,6 +223,7 @@ fun ContactoCard(
     nombre: String,
     telefono: String,
     correo: String,
+    tipoContacto: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -266,6 +267,23 @@ fun ContactoCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = correo,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // ✅ Nueva fila: Tipo de contacto
+            Row {
+                Icon(
+                    painter = painterResource(R.drawable.ic_typecontact), // Usa un ícono adecuado (o genérico)
+                    contentDescription = "Tipo de contacto",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = tipoContacto,
                     color = Color.White
                 )
             }

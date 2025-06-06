@@ -8,5 +8,7 @@ data class DatoState (
     val apellidos: String="",
     val telefono: Int=0,
     val correo: String="",
+    val direccion: String="",
+    val tipoContacto: String = "Amigo",
     val currentContactoId: Long? = null
 )

@@ -1,5 +1,6 @@
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -162,8 +165,55 @@ fun ContentAddView(
             )
         }
 
+        // Campo Direccion
+        MainTextField(
+            value = state.direccion,
+            onValueChange = { directorioViewModel.onDireccionChange(it) },
+            label = "Dirección *",
+            isError = mostrarErrores.value && !camposValidos["direccion"]!!
+        )
+        // ... (mensaje error similar para apellidos)
+        if (mostrarErrores.value && !camposValidos["direccion"]!!) {
+            Text(
+                text = "La direccion es obligatoria",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
+        // Menú desplegable para Tipo de contacto
+        val opciones = listOf("Amigo", "Familiar", "Compañero de trabajo")
+        val expanded = remember { mutableStateOf(false) }
+
+        Text(text = "Tipo de contacto *", style = MaterialTheme.typography.labelLarge)
+
+        Box {
+            Button(
+                onClick = { expanded.value = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = state.tipoContacto)
+            }
+
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false }
+            ) {
+                opciones.forEach { opcion ->
+                    DropdownMenuItem(
+                        text = { Text(opcion) },
+                        onClick = {
+                            directorioViewModel.onTipoContactoChange(opcion)
+                            expanded.value = false
+                        }
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = {
                 if (directorioViewModel.camposEstanCompletos()) {
@@ -172,7 +222,9 @@ fun ContentAddView(
                         nombreContacto = state.nombreContacto,
                         apellidos = state.apellidos,
                         telefono = state.telefono,
-                        correo = state.correo
+                        correo = state.correo,
+                        direccion = state.direccion,
+                        tipoContacto = state.tipoContacto
                     )
 
                     if (state.showSaveButton) {

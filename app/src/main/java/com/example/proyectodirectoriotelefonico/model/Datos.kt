@@ -16,4 +16,8 @@ data class Datos(
     val telefono: Int,
     @ColumnInfo(name= "correo")
     val correo: String,
+    @ColumnInfo(name="direccion")
+    val direccion: String,
+    @ColumnInfo(name = "tipo")
+    val tipoContacto: String = "Amigo"
 )
